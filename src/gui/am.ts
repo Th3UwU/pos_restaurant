@@ -1,17 +1,8 @@
-import { getCurrentWindow, dialog, BrowserWindow, getGlobal } from '@electron/remote';
-import { OpenDialogOptions } from 'electron';
+import { getCurrentWindow, dialog, getGlobal } from '@electron/remote';
 import { Main } from '../main';
-import { Query } from 'pg';
+import { getColumnInfo, Column } from '../misc';
 
 let main: Main = getGlobal('main');
-console.log(main.aux);
-
-type Column = {
-	name: string;
-	type: string;
-};
-
-let column: Column[] = [];
 
 // entries.rows[i][entries.fields[j].name]
 
@@ -21,11 +12,7 @@ async function MAIN(): Promise<void> {
 	(document.getElementById('form_title') as HTMLSpanElement).innerHTML = `${main.aux.column}`;
 
 	// Retrieve column info
-	let tableInfo = await main.querySQL(`SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'public' AND TABLE_NAME = '${main.aux.column}';`);
-	
-	// Create column info array
-	for (const c of tableInfo.rows)
-		column.push({name: c.column_name, type: c.data_type});
+	let column: Column[] = await getColumnInfo(main.aux.column);
 
 	// Form container
 	let form = document.getElementById('form') as HTMLDivElement;
@@ -120,6 +107,7 @@ async function MAIN(): Promise<void> {
 
 			try {
 				await main.querySQL(query);
+				dialog.showMessageBoxSync(getCurrentWindow(), {title: "Éxito", message: "Registro exitoso", type: "info"});
 			}
 			catch (error: any)
 			{
@@ -177,6 +165,7 @@ async function MAIN(): Promise<void> {
 
 			try {
 				await main.querySQL(query);
+				dialog.showMessageBoxSync(getCurrentWindow(), {title: "Éxito", message: "Modificación exitosa", type: "info"});
 			}
 			catch (error: any)
 			{

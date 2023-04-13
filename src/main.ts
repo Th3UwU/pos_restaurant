@@ -74,7 +74,7 @@ class Main {
 	onReady() {
 
 		this.connectDB();
-		this.aux = {action: 'm', id: 2, column: 'empleado'};
+		this.aux = {action: 'm', id: 1, column: 'empleado'};
 		this.createWindow(800, 600, 'gui/am.html', this.window);
 	}
 }
