@@ -12,6 +12,7 @@ class Main {
 
 	window: BrowserWindow = null;
 	client: Client = null;
+	aux: any = null;
 
 	credentials = <Credentials>({
 		idEmployee: 0,
@@ -73,10 +74,12 @@ class Main {
 	onReady() {
 
 		this.connectDB();
-
-		this.createWindow(800, 600, 'gui/am_empleado.html', this.window);
+		this.aux = {action: 'a', id: -1, column: 'empleado'};
+		this.createWindow(800, 600, 'gui/am.html', this.window);
 	}
 }
 
+export { Main, Credentials };
+
 // MAIN PROCESS
-let main: Main = new Main();
+global.main = new Main();

@@ -4,7 +4,7 @@ html, body {
 	margin: 0;
 }
 
-body {
+/* body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -70,5 +70,4 @@ button:hover {
 button:active {
 	position:relative;
 	top:1px;
-}
-
+} */
