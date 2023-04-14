@@ -57,7 +57,7 @@ async function MAIN(): Promise<void> {
 
 				main.setProperty({...main.aux, return: 0}, 'aux');
 				console.log(getGlobal('main').aux);
-				// getCurrentWindow().close();
+				getCurrentWindow().close();
 			});
 			button.innerHTML = 'Seleccionar';
 			resultContainer.appendChild(button);

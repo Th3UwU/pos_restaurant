@@ -76,7 +76,8 @@ class Main {
 		this.connectDB();
 		this.aux = {action: 'm', id: 1, column: 'empleado', return: null};
 		// this.createWindow(800, 600, 'gui/am.html', this.window);
-		this.createWindow(800, 600, 'gui/query.html', this.window);
+		// this.createWindow(800, 600, 'gui/query.html', this.window);
+		this.createWindow(800, 600, 'gui/am_insumo.html', this.window);
 	}
 }
 
