@@ -13,6 +13,11 @@ switch (main.aux.column) {
 		visibleColumns = ['id_empleado', 'nombre', 'puesto'];
 		matchRow = 'nombre';
 		break;
+
+	case "proveedor":
+		visibleColumns = ['id_proveedor', 'nombre', 'direccion'];
+		matchRow = 'nombre';
+		break;
 };
 
 async function MAIN(): Promise<void> {
@@ -55,8 +60,15 @@ async function MAIN(): Promise<void> {
 			let button = document.createElement('button') as HTMLButtonElement;
 			button.addEventListener('click', (): void => {
 
-				main.setProperty({...main.aux, return: 0}, 'aux');
-				console.log(getGlobal('main').aux);
+				if (main.aux.column = 'proveedor')
+				{
+					main.setProperty({...main.aux, return: i[`id_${main.aux.column}`], returnName: i['nombre']}, 'aux');
+				}
+				else
+				{
+					main.setProperty({...main.aux, return: i[`id_${main.aux.column}`]}, 'aux');
+				}
+
 				getCurrentWindow().close();
 			});
 			button.innerHTML = 'Seleccionar';

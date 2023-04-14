@@ -4,7 +4,8 @@ import { getColumnInfo, Column } from '../misc';
 
 let main: Main = getGlobal('main');
 
-// entries.rows[i][entries.fields[j].name]
+// Form container
+let form = document.getElementById('form') as HTMLDivElement;
 
 async function MAIN(): Promise<void> {
 
@@ -13,9 +14,6 @@ async function MAIN(): Promise<void> {
 
 	// Retrieve column info
 	let column: Column[] = await getColumnInfo(main.aux.column);
-
-	// Form container
-	let form = document.getElementById('form') as HTMLDivElement;
 
 	// Create HTML inputs, Ignore the first one (ID)
 	for (let i = 1; i < column.length; i++) {
