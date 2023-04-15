@@ -14,9 +14,19 @@ switch (main.aux.column) {
 		matchRow = 'nombre';
 		break;
 
+	case "empleado_repartidor":
+		visibleColumns = ['id_empleado', 'nombre'];
+		matchRow = 'nombre';
+		break;
+
 	case "proveedor":
 		visibleColumns = ['id_proveedor', 'nombre', 'direccion'];
 		matchRow = 'nombre';
+		break;
+
+	case "comanda":
+		visibleColumns = ['id_comanda', 'nombre_cliente'];
+		matchRow = 'nombre_cliente';
 		break;
 };
 
@@ -37,9 +47,28 @@ async function MAIN(): Promise<void> {
 		let isNumber: boolean = !isNaN(parseInt(search_bar.value));
 
 		// Query
-		let query: string = `SELECT * FROM ${main.aux.column} WHERE ` +
-		((isNumber) ? (`id_${main.aux.column} = ${parseInt(search_bar.value)};`) : (`LOWER(${matchRow}) LIKE LOWER('%${search_bar.value}%');`));
-		console.log(query);
+		let query: string = null;
+
+		if (main.aux.column == 'comanda')
+		{
+			query = `SELECT * FROM comanda WHERE ` +
+			((isNumber) ? (`id_comanda = ${parseInt(search_bar.value)}`) : (`LOWER(${matchRow}) LIKE LOWER('%${search_bar.value}%')`))
+			+ ` AND estatus == 'p';`;
+			console.log(query);
+		}
+		else if (main.aux.column == 'empleado_repartidor')
+		{
+			query = `SELECT * FROM empleado WHERE ` +
+			((isNumber) ? (`id_empleado = ${parseInt(search_bar.value)}`) : (`LOWER(${matchRow}) LIKE LOWER('%${search_bar.value}%')`))
+			+ ` AND puesto = 'repartidor';`;
+			console.log(query);
+		}
+		else
+		{
+			query = `SELECT * FROM ${main.aux.column} WHERE ` +
+			((isNumber) ? (`id_${main.aux.column} = ${parseInt(search_bar.value)};`) : (`LOWER(${matchRow}) LIKE LOWER('%${search_bar.value}%');`));
+			console.log(query);
+		}
 
 		let result = (await main.querySQL(query)).rows;
 
@@ -55,14 +84,19 @@ async function MAIN(): Promise<void> {
 				row.style.display = 'block';
 				resultContainer.appendChild(row);
 			}
-
+			
 			// Button
 			let button = document.createElement('button') as HTMLButtonElement;
 			button.addEventListener('click', (): void => {
 
-				if (main.aux.column = 'proveedor')
+				if (main.aux.column == 'proveedor')
 				{
 					main.setProperty({...main.aux, return: i[`id_${main.aux.column}`], returnName: i['nombre']}, 'aux');
+				}
+				else if (main.aux.column == 'empleado_repartidor')
+				{
+					
+					main.setProperty({...main.aux, return: i[`id_empleado`], returnName: i['nombre']}, 'aux');
 				}
 				else
 				{
