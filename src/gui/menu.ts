@@ -3,6 +3,7 @@ import { Main } from '../main';
 import { getColumnInfo, Column } from '../misc';
 
 let main: Main = getGlobal('main');
+let role: string = main.credentials.role;
 
 let button_entrega_comanda = document.getElementById('button_entrega_comanda') as HTMLButtonElement;
 let button_cobro_comanda = document.getElementById('button_cobro_comanda') as HTMLButtonElement;
@@ -30,8 +31,14 @@ let button_select_modificar_insumo = document.getElementById('button_select_modi
 let button_consultar_platillo = document.getElementById('button_consultar_platillo') as HTMLButtonElement;
 let button_consultar_comanda = document.getElementById('button_consultar_comanda') as HTMLButtonElement;
 
+
 async function MAIN(): Promise<void> {
 
+	// Hide menu (if not 'gerente')
+	if (role != 'gerente')
+		document.getElementById('menu_gerente').style.display = 'none';
+
+	//
 	button_entrega_comanda.addEventListener('click', async (): Promise<void> => {
 
 		main.createWindow(800, 600, 'gui/entrega_comanda.html', getCurrentWindow());

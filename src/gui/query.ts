@@ -89,10 +89,10 @@ async function MAIN(): Promise<void> {
 				{
 					console.log(i);
 					let date: Date = new Date(i[j]);
-					row.innerHTML = date.toISOString().substring(0, 10);
+					row.innerHTML = `${j}: ${date.toISOString().substring(0, 10)}`;
 				}
 				else
-					row.innerHTML = i[j];
+					row.innerHTML = `${j}: ${i[j]}`;
 
 				row.style.display = 'block';
 				resultContainer.appendChild(row);

@@ -115,7 +115,7 @@ async function MAIN(): Promise<void> {
 		for (const c of checkboxes)
 		if (c.checked)
 		totalCost += parseInt(c.dataset.orderCost);
-		total_pay.innerHTML = `TOTAL A PAGAR: $${totalCost}`;
+		total_pay.innerHTML = `TOTAL A COBRAR: $${totalCost}`;
 	});
 
 	// Confirm button
