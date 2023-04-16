@@ -79,6 +79,7 @@ async function MAIN(): Promise<void> {
 		for (const i of result) {
 
 			let resultContainer = document.createElement('div') as HTMLDivElement;
+			resultContainer.className = 'result';
 			
 			for (const j of visibleColumns) {
 				// Row text

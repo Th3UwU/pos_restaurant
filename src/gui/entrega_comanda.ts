@@ -27,7 +27,7 @@ async function MAIN(): Promise<void> {
 	select_delivery_button.addEventListener('click', (): void => {
 
 		// Set aux target
-		main.setProperty({...main.aux, column: 'empleado_repartidor'}, 'aux');
+		main.setProperty({...main.aux, column: 'empleado_repartidor', canSelect: true}, 'aux');
 
 		// Create query window
 		let queryWindow = main.createWindow(800, 600, 'gui/query.html', getCurrentWindow());
@@ -59,10 +59,11 @@ async function MAIN(): Promise<void> {
 		let id: string = `id_order_${id_order}`;
 		let inputContainer = document.createElement('div') as HTMLDivElement;
 		inputContainer.style.display = 'block';
+		inputContainer.className = 'order';
 
 		let checkbox = document.createElement('input') as HTMLInputElement;
 		checkbox.id = id;
-		checkbox.style.display = 'inline-block';
+		checkbox.style.display = 'block';
 		checkbox.className = 'delivery_checkbox';
 		checkbox.type = 'checkbox';
 		checkbox.dataset.orderId = o.id_comanda;
@@ -70,7 +71,7 @@ async function MAIN(): Promise<void> {
 		inputContainer.appendChild(checkbox);
 
 		let checkbox_span = document.createElement('span') as HTMLSpanElement;
-		checkbox_span.style.display = 'inline-block';
+		checkbox_span.style.display = 'block';
 		checkbox_span.innerHTML = `${o.nombre_cliente} - ${o.hora_entrega} - ${(o.fecha as Date).toISOString().substring(0, 10)}`;
 		inputContainer.appendChild(checkbox_span);
 
