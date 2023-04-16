@@ -16,7 +16,7 @@ button_login.addEventListener('click', async (): Promise<void> => {
 		if ((input_user.value == "") || (input_password.value == "") )
 			throw {message: "No puede haber campos vacíos"};
 
-		let user: any = (await main.querySQL(`SELECT * FROM empleado WHERE id_empleado = ${input_user.value};`)).rows[0];
+		let user: any = (await main.querySQL(`SELECT * FROM empleado WHERE id_empleado = ${input_user.value} AND NOT id_empleado = 0;`)).rows[0];
 
 		// Check user
 		if (!user)

@@ -64,12 +64,13 @@ async function MAIN(): Promise<void> {
 		case 'empleado_repartidor':
 			query = `SELECT * FROM empleado WHERE ` +
 			((isNumber) ? (`id_empleado = ${parseInt(search_bar.value)}`) : (`LOWER(${matchRow}) LIKE LOWER('%${search_bar.value}%')`))
-			+ ` AND puesto = 'repartidor';`;
+			+ ` AND puesto = 'repartidor' AND NOT id_${main.aux.column} = 0;`;
 			break;
 
 		default:
 			query = `SELECT * FROM ${main.aux.column} WHERE ` +
-			((isNumber) ? (`id_${main.aux.column} = ${parseInt(search_bar.value)};`) : (`LOWER(${matchRow}) LIKE LOWER('%${search_bar.value}%');`));
+			((isNumber) ? (`id_${main.aux.column} = ${parseInt(search_bar.value)};`) : (`LOWER(${matchRow}) LIKE LOWER('%${search_bar.value}%')`))
+			+ ` AND NOT id_${main.aux.column} = 0;`;
 			break;
 		}
 		
