@@ -61,12 +61,6 @@ async function MAIN(): Promise<void> {
 
 		switch (main.aux.column)
 		{
-		case 'comanda':
-			query = `SELECT * FROM comanda WHERE ` +
-			((isNumber) ? (`id_comanda = ${parseInt(search_bar.value)}`) : (`LOWER(${matchRow}) LIKE LOWER('%${search_bar.value}%')`))
-			+ ` AND estatus == 'p';`;
-			break;
-
 		case 'empleado_repartidor':
 			query = `SELECT * FROM empleado WHERE ` +
 			((isNumber) ? (`id_empleado = ${parseInt(search_bar.value)}`) : (`LOWER(${matchRow}) LIKE LOWER('%${search_bar.value}%')`))
