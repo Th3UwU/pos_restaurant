@@ -79,7 +79,7 @@ class Main {
 		// this.createWindow(800, 600, 'gui/query.html', this.window);
 
 		this.aux = {action: 'a', id: -1, return: null};
-		this.createWindow(800, 600, 'gui/entrega_comanda.html', this.window);
+		this.createWindow(800, 600, 'gui/cobro_comanda.html', this.window);
 	}
 }
 
