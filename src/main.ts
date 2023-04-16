@@ -17,7 +17,7 @@ class Main {
 	credentials = <Credentials>({
 		idEmployee: 0,
 		role: ''
-	 });
+	});
 
 	constructor() {
 		app.on('window-all-closed', this.onWindowAllClosed.bind(this));
@@ -79,7 +79,7 @@ class Main {
 		// this.createWindow(800, 600, 'gui/query.html', this.window);
 
 		this.aux = {action: 'a', id: -1, return: null};
-		this.createWindow(800, 600, 'gui/menu.html', this.window);
+		this.createWindow(800, 600, 'gui/login.html', this.window);
 	}
 }
 
