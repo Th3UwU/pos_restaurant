@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<title>AM</title>
+		<link rel="stylesheet" href="./menu.css" type="text/css">
+	</head>
+	<body>
+		<div id="container">
+			<div id="menu_cajero">
+
+				<!-- COMANDA -->
+				<div class="option">
+					<button id="button_entrega_comanda" type="button">Registrar entrega de comanda</button>
+				</div>
+
+				<div class="option">
+					<button id="button_cobro_comanda" type="button">Cobro de comanda</button>
+				</div>
+
+				<div class="option">
+					<button id="button_registrar_comanda" type="button">Registrar comanda</button>
+				</div>
+	
+			</div>
+			<div id="menu_gerente">
+
+				<!-- PLATILLOS -->
+				<div class="option">
+					<button id="button_registrar_platillo" type="button">Registrar platillo</button>
+				</div>
+
+				<div class="option">
+					<button id="button_modificar_platillo" type="button">Modificar platillo</button>
+					<label for="input_modificar_platillo">ID platillo</label>
+					<input id="input_modificar_platillo" type="text">
+					<button id="button_select_modificar_platillo" type="button">Seleccionar platillo</button>
+				</div>
+
+				<!-- PROVEEDORES -->
+				<div class="option">
+					<button id="button_registrar_proveedor" type="button">Registrar proveedor</button>
+				</div>
+
+				<div class="option">
+					<button id="button_consultar_proveedor" type="button">Consultar proveedor</button>
+				</div>
+
+				<div class="option">
+					<button id="button_modificar_proveedor" type="button">Modificar proveedor</button>
+					<label for="input_modificar_proveedor">ID proveedor</label>
+					<input id="input_modificar_proveedor" type="text">
+					<button id="button_select_modificar_proveedor" type="button">Seleccionar proveedor</button>
+				</div>
+				
+				<!-- COMPRA A PROVEEDOR -->
+				<div class="option">
+					<button id="button_registrar_compra_proveedor" type="button">Registrar compra proveedor</button>
+				</div>
+				
+				<!-- EMPLEADOS -->
+				<div class="option">
+					<button id="button_registrar_empleado" type="button">Registrar empleado</button>
+				</div>
+
+				<div class="option">
+					<button id="button_consultar_empleado" type="button">Consultar empleado</button>
+				</div>
+
+				<div class="option">
+					<button id="button_modificar_empleado" type="button">Modificar empleado</button>
+					<label for="input_modificar_empleado">ID empleado</label>
+					<input id="input_modificar_empleado" type="text">
+					<button id="button_select_modificar_empleado" type="button">Seleccionar empleado</button>
+				</div>
+				
+				<!-- INSUMOS -->
+				<div class="option">
+					<button id="button_registrar_insumo" type="button">Registrar insumo</button>
+				</div>
+
+				<div class="option">
+					<button id="button_consultar_insumo" type="button">Consultar insumo</button>
+				</div>
+
+				<div class="option">
+					<button id="button_modificar_insumo" type="button">Modificar insumo</button>
+					<label for="input_modificar_insumo">ID insumo</label>
+					<input id="input_modificar_insumo" type="text">
+					<button id="button_select_modificar_insumo" type="button">Seleccionar insumo</button>
+				</div>
+
+			</div>
+			<div id="menu_common">
+
+				<!-- PLATILLOS -->
+				<div class="option">
+					<button id="button_consultar_platillo" type="button">Consultar platillo</button>
+				</div>
+
+				<!-- COMANDA -->
+				<div class="option">
+					<button id="button_consultar_comanda" type="button">Consultar comanda</button>
+				</div>
+				
+			</div>
+		</div>
+	</body>
+	<script style="display: none;">
+		require("./menu.js")
+	</script>
+</html>
