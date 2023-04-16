@@ -19,6 +19,11 @@ switch (main.aux.column) {
 		matchRow = 'nombre';
 		break;
 
+	case "insumo":
+		visibleColumns = ['id_insumo', 'nombre', 'existencias'];
+		matchRow = 'nombre';
+		break;
+
 	case "empleado_repartidor":
 		visibleColumns = ['id_empleado', 'nombre'];
 		matchRow = 'nombre';
@@ -30,7 +35,7 @@ switch (main.aux.column) {
 		break;
 
 	case "comanda":
-		visibleColumns = ['id_comanda', 'nombre_cliente'];
+		visibleColumns = ['id_comanda', 'nombre_cliente', 'local', 'plaza', 'piso', 'pasillo', 'hora_entrega', 'fecha'];
 		matchRow = 'nombre_cliente';
 		break;
 };

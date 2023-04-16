@@ -285,7 +285,7 @@ function addSupplierInputs(suppID: string, suppName: string, newSupp: boolean) {
 	if (newSupp)
 	{
 		// Set aux target
-		main.setProperty({...main.aux, column: 'proveedor', target: id}, 'aux');
+		main.setProperty({...main.aux, column: 'proveedor', canSelect: true}, 'aux');
 
 		// Create query window
 		let queryWindow = main.createWindow(800, 600, 'gui/query.html', getCurrentWindow());
