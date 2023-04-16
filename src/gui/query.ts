@@ -81,10 +81,18 @@ async function MAIN(): Promise<void> {
 			let resultContainer = document.createElement('div') as HTMLDivElement;
 			
 			for (const j of visibleColumns) {
-
 				// Row text
 				let row = document.createElement('span') as HTMLSpanElement;
-				row.innerHTML = i[j];
+				
+				if (j.includes('fecha'))
+				{
+					console.log(i);
+					let date: Date = new Date(i[j]);
+					row.innerHTML = date.toISOString().substring(0, 10);
+				}
+				else
+					row.innerHTML = i[j];
+
 				row.style.display = 'block';
 				resultContainer.appendChild(row);
 			}
