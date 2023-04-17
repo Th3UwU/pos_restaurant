@@ -64,7 +64,7 @@ async function MAIN(): Promise<void> {
 		case 'empleado_repartidor':
 			query = `SELECT * FROM empleado WHERE ` +
 			((isNumber) ? (`id_empleado = ${parseInt(search_bar.value)}`) : (`LOWER(${matchRow}) LIKE LOWER('%${search_bar.value}%')`))
-			+ ` AND puesto = 'repartidor' AND NOT id_${main.aux.column} = 0;`;
+			+ ` AND puesto = 'repartidor' AND NOT id_empleado = 0;`;
 			break;
 
 		default:
