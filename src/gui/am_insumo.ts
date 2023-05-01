@@ -9,15 +9,18 @@ let button_cancel = document.getElementById('button_cancel') as HTMLButtonElemen
 let button_add_supplier = document.getElementById('button_add_supplier') as HTMLButtonElement;
 let id_supp: number = 0;
 
+let id_insumo = document.getElementById('id_insumo') as HTMLInputElement;
+
 // Form container
 let form = document.getElementById('form') as HTMLDivElement;
 let form_suppliers = document.getElementById('form_suppliers') as HTMLDivElement;
 
 async function MAIN(): Promise<void> {
 
+	id_insumo.readOnly = true;
+
 	// Retrieve column info
 	let column: Column[] = await getColumnInfo('insumo');
-
 
 	// Create HTML inputs, Ignore the first one (ID)
 	for (let i = 1; i < column.length; i++) {
@@ -86,6 +89,9 @@ async function MAIN(): Promise<void> {
 				input.id = id;
 				inputContainer.appendChild(input);
 
+				if (main.aux.action == 'a')
+					input.disabled = true;
+
 				// Append to form
 				form.appendChild(inputContainer);
 				
@@ -97,15 +103,15 @@ async function MAIN(): Promise<void> {
 
 	if (main.aux.action == 'a')
 	{
+		let new_id: number = (await main.querySQL(`SELECT MAX(ID_INSUMO) FROM INSUMO;`)).rows[0].max;
+		new_id++;
+		id_insumo.value = `${new_id}`;
+
 		// Accept button
 		button_accept.addEventListener('click', async (): Promise<void> => {
 
-			// Query ID
-			let queryID: number = (await main.querySQL('SELECT MAX(id_insumo) FROM insumo')).rows[0].max;
-			queryID++;
-
 			// Main query
-			let query: string = `INSERT INTO insumo VALUES(${queryID}`;
+			let query: string = `INSERT INTO insumo VALUES(${new_id}`;
 			for (let i = 1; i < column.length; i++) {
 				
 				let id: string = `input_${column[i].name}`;
@@ -129,7 +135,7 @@ async function MAIN(): Promise<void> {
 			let queryDetail: string[] = [];
 			let form_suppliers_elements = form_suppliers.getElementsByClassName('supplier') as HTMLCollectionOf<HTMLDivElement>;
 			for (const supp of form_suppliers_elements) {
-				queryDetail.push(`INSERT INTO insumo_proveedor VALUES((SELECT MAX(id_insumo_proveedor) FROM insumo_proveedor) + 1, ${(supp.querySelector('.id') as HTMLSpanElement).innerHTML}, ${queryID});`);
+				queryDetail.push(`INSERT INTO insumo_proveedor VALUES((SELECT MAX(id_insumo_proveedor) FROM insumo_proveedor) + 1, ${(supp.querySelector('.id') as HTMLSpanElement).innerHTML}, ${new_id});`);
 			}
 
 			try {
@@ -139,6 +145,7 @@ async function MAIN(): Promise<void> {
 					await main.querySQL(dq);
 				}
 				dialog.showMessageBoxSync(getCurrentWindow(), {title: "Éxito", message: "Registro exitoso", type: "info"});
+				getCurrentWindow().close();
 			}
 			catch (error: any)
 			{
@@ -149,6 +156,8 @@ async function MAIN(): Promise<void> {
 	}
 	else if (main.aux.action == 'm')
 	{
+		id_insumo.value = `${main.aux.id}`;
+
 		// Get current entry info
 		let entry = (await main.querySQL(`SELECT * FROM insumo WHERE id_insumo = ${main.aux.id};`)).rows[0];
 
@@ -226,6 +235,7 @@ async function MAIN(): Promise<void> {
 					await main.querySQL(dq);
 				}
 				dialog.showMessageBoxSync(getCurrentWindow(), {title: "Éxito", message: "Modificación exitosa", type: "info"});
+				getCurrentWindow().close();
 			}
 			catch (error: any)
 			{
@@ -297,14 +307,10 @@ function addSupplierInputs(suppID: string, suppName: string, newSupp: boolean) {
 		{
 			const remote_1 = require("@electron/remote");
 			const main = (0, remote_1.getGlobal)('main');
-			document.getElementById('${id}').querySelector('.id').innerHTML = main.aux.return;
-			document.getElementById('${id}').querySelector('.name').innerHTML = main.aux.returnName;
+			document.getElementById('${id}').querySelector('.id').innerHTML = main.aux.return.id_proveedor;
+			document.getElementById('${id}').querySelector('.name').innerHTML = main.aux.return.nombre;
 		}
-		catch (error)
-		{
-			document.getElementById('${id}').querySelector('.id').innerHTML = main.aux.return;
-			document.getElementById('${id}').querySelector('.span').innerHTML = main.aux.returnName;
-		}
+		catch (error) {}
 		`;
 		
 		queryWindow.setVar(code, 'codeCloseParent');

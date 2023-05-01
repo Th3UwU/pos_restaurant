@@ -14,6 +14,43 @@ async function MAIN(): Promise<void> {
 
 	// Retrieve column info
 	let column: Column[] = await getColumnInfo(main.aux.column);
+	
+	// Primary key (ID)
+	{		
+		let entry_id: number = 0;
+
+		if (main.aux.action == 'a')
+		{
+			entry_id = (await main.querySQL(`SELECT MAX(id_${main.aux.column}) FROM ${main.aux.column};`)).rows[0].max;
+			entry_id++;
+		}
+		else if (main.aux.action == 'm')
+		{
+			entry_id = main.aux.id;
+		}
+
+		// Container
+		let inputContainer = document.createElement('div') as HTMLDivElement;
+		let id: string = `input_${column[0].name}`;
+
+		// Input label
+		let inputLabel = document.createElement('label') as HTMLLabelElement;
+		inputLabel.innerHTML = `${column[0].name}`;
+		inputLabel.setAttribute('for', id);
+		inputContainer.appendChild(inputLabel);
+
+		// Input
+		let input = document.createElement('input') as HTMLInputElement;
+		input.type = 'number';
+		input.readOnly = true;
+		input.id = id;
+		input.value = `${entry_id}`;
+
+		inputContainer.appendChild(input);
+
+		// Append to form
+		form.appendChild(inputContainer);
+	}
 
 	// Create HTML inputs, Ignore the first one (ID)
 	for (let i = 1; i < column.length; i++) {
@@ -29,7 +66,7 @@ async function MAIN(): Promise<void> {
 
 		switch (column[i].type) {
 
-			case 'integer': case 'bigint': {
+			case 'integer': case 'bigint': case 'real': {
 
 				// Input
 				let input = document.createElement('input') as HTMLInputElement;
@@ -66,6 +103,10 @@ async function MAIN(): Promise<void> {
 				input.type = 'checkbox';
 				input.checked = true;
 				input.id = id;
+
+				if (main.aux.action == 'a')
+					input.disabled = true;
+
 				inputContainer.appendChild(input);
 
 				// Append to form
@@ -90,7 +131,7 @@ async function MAIN(): Promise<void> {
 
 				switch (column[i].type) {
 
-					case 'integer': case 'bigint': case 'text':
+					case 'integer': case 'bigint': case 'text': case 'real':
 						query += `, '${(document.getElementById(id) as HTMLInputElement).value}'`;
 						break;
 
@@ -106,6 +147,7 @@ async function MAIN(): Promise<void> {
 			try {
 				await main.querySQL(query);
 				dialog.showMessageBoxSync(getCurrentWindow(), {title: "Éxito", message: "Registro exitoso", type: "info"});
+				getCurrentWindow().close();
 			}
 			catch (error: any)
 			{
@@ -164,6 +206,7 @@ async function MAIN(): Promise<void> {
 			try {
 				await main.querySQL(query);
 				dialog.showMessageBoxSync(getCurrentWindow(), {title: "Éxito", message: "Modificación exitosa", type: "info"});
+				getCurrentWindow().close();
 			}
 			catch (error: any)
 			{

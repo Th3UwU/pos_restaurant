@@ -95,6 +95,9 @@ async function MAIN(): Promise<void> {
 				input.id = id;
 				inputContainer.appendChild(input);
 
+				if (main.aux.action == 'a')
+					input.disabled = true;
+
 				// Append to form
 				form.appendChild(inputContainer);
 				

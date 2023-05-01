@@ -47,14 +47,10 @@ async function MAIN(): Promise<void> {
 		{
 			const remote_1 = require("@electron/remote");
 			let main = (0, remote_1.getGlobal)('main');
-			document.getElementById('delivery').innerHTML = main.aux.returnName;
-			document.getElementById('delivery').dataset.deliveryId = main.aux.return;
+			document.getElementById('delivery').innerHTML = main.aux.return.nombre;
+			document.getElementById('delivery').dataset.deliveryId = main.aux.return.id_empleado;
 		}
-		catch (error)
-		{
-			document.getElementById('delivery').innerHTML = main.aux.returnName;
-			document.getElementById('delivery').dataset.deliveryId = main.aux.return;
-		}
+		catch (error) {}
 		`;
 		
 		queryWindow.setVar(code, 'codeCloseParent');
