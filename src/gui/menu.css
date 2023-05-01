@@ -33,6 +33,14 @@ label {
 	color: lightgray;
 }
 
+span {
+	display: block;
+	margin: auto;
+	text-align: center;
+	font-weight: bold;
+	color: lightgray;
+}
+
 input {
 	width: 70%;
 	margin: auto;

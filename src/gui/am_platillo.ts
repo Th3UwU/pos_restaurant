@@ -17,6 +17,10 @@ let button_add_ingredient = document.getElementById('button_add_ingredient') as 
 
 const dialogOpenOptions: OpenDialogOptions = {title: 'Elegir imagen', properties: ['openFile']};
 
+button_cancel.addEventListener('click', (): void => {
+	getCurrentWindow().close();
+});
+
 async function MAIN(): Promise<void> {
 
 	id_platillo.readOnly = true;
@@ -108,6 +112,7 @@ async function MAIN(): Promise<void> {
 				// Image src
 				let image = document.createElement('img') as HTMLImageElement;
 				image.style.display = 'none';
+				image.id = `image_preview`;
 
 				// Button select image
 				let button = document.createElement('button') as HTMLButtonElement;
@@ -135,7 +140,6 @@ async function MAIN(): Promise<void> {
 
 	if (main.aux.action == 'a')
 	{
-
 		let new_id: number = (await main.querySQL(`SELECT MAX(ID_PLATILLO) FROM PLATILLO;`)).rows[0].max;
 		new_id++;
 		id_platillo.value = `${new_id}`;
@@ -150,9 +154,9 @@ async function MAIN(): Promise<void> {
 						throw {message: `El insumo seleccionado no es válido`};
 
 				let imageRaw: string = null;
-				let image = (document.getElementById('input_imagen') as HTMLInputElement);
-				if (image.value != "")
-					imageRaw = readFileSync(image.value, null).toString('base64');
+				let input_imagen = (document.getElementById('input_imagen') as HTMLInputElement);
+				if (input_imagen.value != "")
+					imageRaw = readFileSync(input_imagen.value, null).toString('base64');
 
 				await main.querySQL(`INSERT INTO PLATILLO VALUES(
 					${new_id},
@@ -162,7 +166,7 @@ async function MAIN(): Promise<void> {
 					${((imageRaw) ? (`(DECODE('${imageRaw}', 'base64'))`) : (`DEFAULT`))},
 					${(document.getElementById('input_tiempo_preparacion') as HTMLInputElement).value},
 					'${(document.getElementById('input_categoria') as HTMLInputElement).value}',
-					${(document.getElementById('input_estatus') as HTMLInputElement).checked}
+					DEFAULT
 					);`);
 				
 				for (const i of ingredients)
@@ -186,7 +190,72 @@ async function MAIN(): Promise<void> {
 	}
 	else if (main.aux.action == 'm')
 	{
+		let platillo = (await main.querySQL(`SELECT * FROM PLATILLO WHERE ID_PLATILLO = ${main.aux.id};`)).rows[0];
 
+		// Fill old data
+		id_platillo.value = `${platillo.id_platillo}`;
+		(document.getElementById('input_nombre') as HTMLInputElement).value = `${platillo.nombre}`;
+		(document.getElementById('input_precio') as HTMLInputElement).value = `${platillo.precio}`;
+		(document.getElementById('input_descripcion') as HTMLInputElement).value = `${platillo.descripcion}`;
+
+		if (platillo.imagen)
+		{
+			let image_preview = (document.getElementById('image_preview') as HTMLImageElement);
+			image_preview.style.display = 'block';
+			image_preview.src = URL.createObjectURL(new Blob([platillo.imagen.buffer], {type: "image/png"}));
+		}
+
+		(document.getElementById('input_tiempo_preparacion') as HTMLInputElement).value = `${platillo.tiempo_preparacion}`;
+		(document.getElementById('input_categoria') as HTMLInputElement).value = `${platillo.categoria}`;
+		(document.getElementById('input_estatus') as HTMLInputElement).checked = platillo.estatus;
+
+		let platillo_insumos = (await main.querySQL(`SELECT * FROM INSUMO_PLATILLO WHERE FK_PLATILLO = ${main.aux.id};`)).rows;
+		for (const pi of platillo_insumos)
+			await addIngredient(pi.fk_insumo, pi.cantidad);
+
+		// Query DB
+		button_accept.addEventListener('click', async (): Promise<void> => {
+			try
+			{
+				let ingredients = document.getElementsByClassName('ingredient') as HTMLCollectionOf<HTMLDivElement>;
+				for (const i of ingredients)
+					if (i.dataset.valid == '0')
+						throw {message: `El insumo seleccionado no es válido`};
+	
+				let imageRaw: string = null;
+				let image = (document.getElementById('input_imagen') as HTMLInputElement);
+				if (image.value != "")
+					imageRaw = readFileSync(image.value, null).toString('base64');
+			
+				await main.querySQL(`UPDATE PLATILLO SET
+					NOMBRE = '${(document.getElementById('input_nombre') as HTMLInputElement).value}',
+					PRECIO = ${(document.getElementById('input_precio') as HTMLInputElement).value},
+					DESCRIPCION = '${(document.getElementById('input_descripcion') as HTMLInputElement).value}',
+					${((imageRaw) ? (`IMAGEN = (DECODE('${imageRaw}', 'base64')), `) : (``))}
+					TIEMPO_PREPARACION = ${(document.getElementById('input_tiempo_preparacion') as HTMLInputElement).value},
+					CATEGORIA = '${(document.getElementById('input_categoria') as HTMLInputElement).value}',
+					ESTATUS = ${(document.getElementById('input_estatus') as HTMLInputElement).checked}
+					WHERE ID_PLATILLO = ${main.aux.id};`);
+
+				await main.querySQL(`DELETE FROM INSUMO_PLATILLO WHERE FK_PLATILLO = ${main.aux.id};`);
+				for (const i of ingredients)
+				{
+					await main.querySQL(`INSERT INTO INSUMO_PLATILLO VALUES(
+						(SELECT MAX(ID_INSUMO_PLATILLO) FROM INSUMO_PLATILLO) + 1,
+						${main.aux.id},
+						${(i.querySelector('.ingredient_id') as HTMLInputElement).value},
+						${(i.querySelector('.ingredient_amount') as HTMLInputElement).value}
+					);`);
+				}
+	
+				dialog.showMessageBoxSync(null, {title: "Éxito", message: "Modificación exitosa", type: "info"});
+				getCurrentWindow().close();
+			}
+			catch (error: any)
+			{
+				dialog.showMessageBoxSync(getCurrentWindow(), {title: "Error", message: error.message, type: "error"});
+			}
+		});
 	}
 }
 MAIN();
@@ -194,29 +263,41 @@ MAIN();
 let ingredient_id: number = 0;
 button_add_ingredient.addEventListener('click', async (): Promise<void> => {
 
+	await addIngredient(0, 1);
+});
+
+async function addIngredient(id_insumo: number, cantidad: number): Promise<void>
+{
 	let id = `ingredient_id_${ingredient_id}`;
 	ingredient_id++;
 
 	let ingredientItemContainer = document.createElement('div') as HTMLDivElement;
 	ingredientItemContainer.className = 'ingredient';
 	ingredientItemContainer.id = `${id}`;
-	ingredientItemContainer.dataset.valid = '0';
+	ingredientItemContainer.dataset.valid = (id_insumo == 0) ? ('0') : ('1');
 
 	let ingredientName = document.createElement('span') as HTMLSpanElement;
+	if (id_insumo != 0)
+		ingredientName.innerHTML = `${(await main.querySQL(`SELECT NOMBRE FROM INSUMO WHERE ID_INSUMO = ${id_insumo};`)).rows[0].nombre}, ID Insumo`;
 	ingredientName.className = 'ingredient_name';
 	ingredientItemContainer.appendChild(ingredientName);
 
 	let ingredientID = document.createElement('input') as HTMLInputElement;
 	ingredientID.className = 'ingredient_id';
+	if (id_insumo != 0)
+		ingredientID.value = `${id_insumo}`;
 	ingredientID.addEventListener('change', async (): Promise<void> => {
 
-		let ingredient = (await main.querySQL(`SELECT * FROM INSUMO WHERE ID_INSUMO = ${ingredientID.value};`)).rows;
-		if (ingredient.length != 0)
+		try
 		{
+			if (ingredientID.value == '0')
+				throw 'a';
+
+			let ingredient = (await main.querySQL(`SELECT * FROM INSUMO WHERE ID_INSUMO = ${ingredientID.value};`)).rows;
 			(document.getElementById(id).querySelector('.ingredient_name') as HTMLSpanElement).innerHTML = ingredient[0].nombre + ', ID Insumo';
 			document.getElementById(id).dataset.valid = '1';
 		}
-		else
+		catch (error: any)
 		{
 			(document.getElementById(id).querySelector('.ingredient_name') as HTMLSpanElement).innerHTML = 'Insumo inválido';
 			document.getElementById(id).dataset.valid = '0';
@@ -234,7 +315,7 @@ button_add_ingredient.addEventListener('click', async (): Promise<void> => {
 	ingredientAmount.className = 'ingredient_amount';
 	ingredientAmount.id = id + '_label';
 	ingredientAmount.min = '1';
-	ingredientAmount.value = '1';
+	ingredientAmount.value = `${cantidad}`;
 	ingredientItemContainer.appendChild(ingredientAmount);
 
 	let ingredientButton = document.createElement('button') as HTMLButtonElement;
@@ -265,4 +346,4 @@ button_add_ingredient.addEventListener('click', async (): Promise<void> => {
 	ingredientItemContainer.appendChild(ingredientButton);
 
 	form_ingredients.appendChild(ingredientItemContainer);
-});
+}

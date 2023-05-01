@@ -11,6 +11,7 @@ let button_registrar_comanda = document.getElementById('button_registrar_comanda
 let button_registrar_platillo = document.getElementById('button_registrar_platillo') as HTMLButtonElement;
 let button_modificar_platillo = document.getElementById('button_modificar_platillo') as HTMLButtonElement;
 let input_modificar_platillo = document.getElementById('input_modificar_platillo') as HTMLInputElement;
+let span_modificar_platillo = document.getElementById('span_modificar_platillo') as HTMLSpanElement;
 let button_select_modificar_platillo = document.getElementById('button_select_modificar_platillo') as HTMLButtonElement;
 let button_registrar_proveedor = document.getElementById('button_registrar_proveedor') as HTMLButtonElement;
 let button_consultar_proveedor = document.getElementById('button_consultar_proveedor') as HTMLButtonElement;
@@ -47,6 +48,53 @@ async function MAIN(): Promise<void> {
 	button_registrar_platillo.addEventListener('click', async (): Promise<void> => {
 
 		main.createWindow(800, 600, 'gui/am_platillo.html', getCurrentWindow());
+	});
+
+	button_modificar_platillo.addEventListener('click', async (): Promise<void> => {
+
+		if (input_modificar_platillo.dataset.valid == '0')
+			{dialog.showMessageBoxSync(getCurrentWindow(), {title: "Error", message: "Platillo inválido", type: "error"}); return;}
+		main.setProperty({...main.aux, action: 'm', id: input_modificar_platillo.value}, 'aux');
+		main.createWindow(800, 600, 'gui/am_platillo.html', getCurrentWindow());
+	});
+
+	input_modificar_platillo.addEventListener('change', async (): Promise<void> => {
+
+		try
+		{
+			input_modificar_platillo.dataset.valid = '1';
+			span_modificar_platillo.innerHTML = (await main.querySQL(`SELECT NOMBRE FROM PLATILLO WHERE ID_PLATILLO = ${input_modificar_platillo.value};`)).rows[0].nombre;
+		}
+		catch (error: any)
+		{
+			input_modificar_platillo.dataset.valid = '0';
+			span_modificar_platillo.innerHTML = 'Platillo no encontrado';
+		}
+	});
+
+	button_select_modificar_platillo.addEventListener('click', async (): Promise<void> => {
+		
+		main.setProperty({...main.aux, column: 'platillo', canSelect: true}, 'aux');
+		let queryWindow = main.createWindow(800, 600, 'gui/query.html', getCurrentWindow());
+		
+		let code: string =
+		`
+		try
+		{
+			const remote_1 = require("@electron/remote");
+			let main = (0, remote_1.getGlobal)('main');
+			document.getElementById('input_modificar_platillo').dataset.valid = '1';
+			document.getElementById('input_modificar_platillo').value = main.aux.return.id_platillo;
+			document.getElementById('span_modificar_platillo').innerHTML = main.aux.return.nombre;
+		}
+		catch (error)
+		{
+			document.getElementById('input_modificar_platillo').dataset.valid = '0';
+			document.getElementById('span_modificar_platillo').innerHTML = 'Platillo no encontrado';
+		}
+		`;
+		
+		queryWindow.setVar(code, 'codeCloseParent');
 	});
 
 	button_cobro_comanda.addEventListener('click', async (): Promise<void> => {
