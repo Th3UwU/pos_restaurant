@@ -105,21 +105,7 @@ async function MAIN(): Promise<void> {
 				let button = document.createElement('button') as HTMLButtonElement;
 				button.addEventListener('click', (): void => {
 	
-					switch (main.aux.column)
-					{
-					case 'proveedor':
-						main.setProperty({...main.aux, return: i[`id_${main.aux.column}`], returnName: i['nombre']}, 'aux');
-						break;
-	
-					case 'empleado_repartidor':
-						main.setProperty({...main.aux, return: i[`id_empleado`], returnName: i['nombre']}, 'aux');
-						break;
-	
-					default:
-						main.setProperty({...main.aux, return: i[`id_${main.aux.column}`]}, 'aux');
-						break;
-	
-					};
+					main.setProperty({...main.aux, return: i}, 'aux');
 	
 					getCurrentWindow().close();
 				});

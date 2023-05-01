@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<title>AM</title>
+		<link rel="stylesheet" href="./am_platillo.css" type="text/css">
+	</head>
+	<body>
+		<div id="container">
+
+			<label for="id_platillo">ID Platillo</label>
+			<input id="id_platillo" type="text">
+			
+			<div id="form"></div>
+			
+			<button id="button_accept" type="button">Aceptar</button>
+			<button id="button_cancel" type="button">Cancelar</button>
+			<button id="button_add_ingredient" type="button">Agregar insumo</button>
+			
+			<div id="form_ingredients"></div>
+
+		</div>
+	</body>
+	<script style="display: none;">
+		require("./am_platillo.js")
+	</script>
+</html>
