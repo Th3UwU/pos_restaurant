@@ -5,3 +5,9 @@ img {
 span, img {
 	display: block;
 }
+
+pre {
+    font-family: consolas;
+    font-size: 24px;
+    font-weight: bold;
+}

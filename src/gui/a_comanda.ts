@@ -4,6 +4,14 @@ import { getColumnInfo, Column } from '../misc';
 
 let main: Main = getGlobal('main');
 
+type InsumosRequeridos = {
+	id_insumo: number;
+	stock_requerido: number;
+	stock_actual: number;
+};
+
+let insumosRequeridos: InsumosRequeridos[] = [];
+
 // Section order data
 let id_comanda = document.getElementById('id_comanda') as HTMLInputElement;
 let fecha = document.getElementById('fecha') as HTMLInputElement;
@@ -30,6 +38,7 @@ let button_section_platillos_back = document.getElementById('button_section_plat
 // Sections
 let section_order_data = document.getElementById('section_order_data') as HTMLDivElement;
 let section_platillos = document.getElementById('section_platillos') as HTMLDivElement;
+let section_ticket = document.getElementById('section_ticket') as HTMLDivElement;
 
 // Form container
 let order_data = document.getElementById('order_data') as HTMLDivElement;
@@ -94,7 +103,85 @@ async function MAIN(): Promise<void> {
 
 	button_section_platillos_continue.addEventListener('click', async (): Promise<void> => {
 
+		try {
+			await checkInsumos();
 
+			// header
+			if (telefonica.checked)
+			{
+				await main.querySQL(`INSERT INTO COMANDA VALUES(${new_id}, 0,
+					'${nombre.value}', '${local.value}', '${plaza.value}', '${piso.value}', '${pasillo.value}',
+					'${hora.valueAsDate.getHours()}:${hora.valueAsDate.getMinutes()}', DEFAULT, DEFAULT);`);
+			}
+			else
+			{
+				await main.querySQL(`INSERT INTO COMANDA VALUES(${new_id}, 0,
+					'${nombre.value}', NULL, NULL, NULL, NULL, NULL, DEFAULT, DEFAULT);`);
+			}
+
+			// detail
+			let platillos_html = document.getElementsByClassName('platillo') as HTMLCollectionOf<HTMLDivElement>;
+			for (const p of platillos_html) {
+
+				if ((p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber != 0)
+				{
+					let costo_unitario: number = (await main.querySQL(`SELECT PRECIO FROM PLATILLO WHERE ID_PLATILLO = ${p.dataset.idPlatillo};`)).rows[0].precio;
+
+					await main.querySQL(`INSERT INTO PLATILLO_COMANDA VALUES(
+						(SELECT MAX(ID_PLATILLO_COMANDA) FROM PLATILLO_COMANDA) + 1,
+						${p.dataset.idPlatillo},
+						${new_id},
+						${(p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber},
+						${costo_unitario}
+						);`);
+				}
+			}
+
+			// decrease insumo stock
+			for (const i of insumosRequeridos)
+				await main.querySQL(`UPDATE INSUMO SET
+				EXISTENCIAS = ${i.stock_actual - i.stock_requerido}
+				WHERE ID_INSUMO = ${i.id_insumo};`);
+
+			dialog.showMessageBoxSync(null, {title: "Éxito", message: "Venta exitosa", type: "info"});
+			
+			section_ticket.style.display = 'block';
+			section_platillos.style.display = 'none';
+
+			let ticket = section_ticket.querySelector('pre');
+			let total: number = 0;
+
+			ticket.innerHTML = `Restaurante ALE\n`;
+			ticket.innerHTML += `${(new Date()).toISOString().substring(0, 10)}\n`;
+			for (const p of platillos_html)
+			{
+				if ((p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber != 0)
+				{
+					let costo = (await main.querySQL(`SELECT PRECIO FROM PLATILLO WHERE ID_PLATILLO = ${p.dataset.idPlatillo};`)).rows[0].precio * (p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber;
+					total += costo;
+
+					let nombre_platillo: string = (await main.querySQL(`SELECT NOMBRE FROM PLATILLO WHERE ID_PLATILLO = ${p.dataset.idPlatillo};`)).rows[0].nombre;
+					ticket.innerHTML += `${nombre_platillo} X ${(p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber}`;
+					ticket.innerHTML += ` - $${costo}\n`;
+				}
+			}
+
+			ticket.innerHTML += `\nTOTAL: $${total}\n`;
+
+			if (telefonica.checked)
+			{
+				ticket.innerHTML += `\nLocal: ${local.value}\nPlaza: ${plaza.value}\nPiso: ${piso.value}\nPasillo: ${pasillo.value}\n`;
+				ticket.innerHTML += `Hora entrega: ${hora.valueAsDate.getHours()}:${hora.valueAsDate.getMinutes()}\n`;
+			}
+
+			ticket.innerHTML += `--- Gracias por su preferencia ---`;
+
+
+		}
+		catch (error: any) {
+			console.log(error);
+			dialog.showMessageBoxSync(getCurrentWindow(), {title: "Error", message: error.message, type: "error"});
+		}
 	});
 
 	button_section_platillos_back.addEventListener('click', () => {
@@ -105,3 +192,42 @@ async function MAIN(): Promise<void> {
 
 }
 MAIN();
+
+async function checkInsumos(): Promise<void> {
+
+	insumosRequeridos = [];
+	let platillos_html = document.getElementsByClassName('platillo') as HTMLCollectionOf<HTMLDivElement>;
+	for (const p of platillos_html) {
+		
+		let insumos_platillo = (await main.querySQL(`SELECT * FROM INSUMO_PLATILLO WHERE FK_PLATILLO = ${p.dataset.idPlatillo};`)).rows;
+		for (const insumo of insumos_platillo)
+		{
+			let index: InsumosRequeridos = null;
+			for (const i of insumosRequeridos)
+				if (i.id_insumo == insumo.fk_insumo)
+					{index = i; break;}
+
+			if (index)
+				index.stock_requerido += insumo.cantidad * (p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber;
+
+			else
+			{
+				insumosRequeridos.push({
+					id_insumo: insumo.fk_insumo,
+					stock_requerido: insumo.cantidad * (p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber,
+					stock_actual: (await main.querySQL(`SELECT EXISTENCIAS FROM INSUMO WHERE ID_INSUMO = ${insumo.fk_insumo};`)).rows[0].existencias
+				});
+			}
+			
+		}
+	}
+
+	for (const i of insumosRequeridos)
+	{
+		if ((i.stock_actual - i.stock_requerido) < 0)
+		{
+			let nombre_insumo: string = (await main.querySQL(`SELECT NOMBRE FROM INSUMO WHERE ID_INSUMO = ${i.id_insumo};`)).rows[0].nombre;
+			throw {message: `No hay suficientes ${nombre_insumo} para preparar los platillos`};
+		}
+	}
+}

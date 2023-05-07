@@ -20,15 +20,16 @@
 	
 						<label for="nombre">Nombre cliente</label>
 						<input id="nombre" type="text"></input>
-	
-						<label for="hora">Hora de entrega</label>
-						<input id="hora" type="time"></input>
 					</div>
 					
 					<label for="telefonica">Comanda telefonica</label>
 					<input id="telefonica" type="checkbox" checked></input>
 	
 					<div id="order_data_tel">
+
+						<label for="hora">Hora de entrega</label>
+						<input id="hora" type="time"></input>
+
 						<label for="local">No. Local</label>
 						<input id="local" type="number"></input>
 	
@@ -49,13 +50,16 @@
 				<div id="section_platillos">
 
 					<template id="template_platillo">
-						<div class="platillo" data-id-platillo="0">
+						<div class="platillo" data-id-platillo="0", data-valid="0">
 							<button>
 								<span class="nombre"></span>
 								<img class="imagen" src="">
 								<span class="precio"></span>
-								<label>Q<input class="cantidad" type="number" min="0" value="0"></label>
 							</button>
+
+							<div>
+								<label>Q<input class="cantidad" type="number" min="0" value="0"></label>
+							</div>
 						</div>
 					</template>
 
@@ -66,6 +70,12 @@
 
 					<button id="button_section_platillos_continue" type="button">Continuar</button>
 					<button id="button_section_platillos_back" type="button">Retroceder</button>
+				</div>
+
+				<div id="section_ticket">
+					<pre>
+						
+					</pre>
 				</div>
 
 
