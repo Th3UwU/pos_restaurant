@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<title>Registrar comanda</title>
+		<link rel="stylesheet" href="./a_comanda.css" type="text/css">
+	</head>
+	<body>
+		<div id="container">
+
+			<div id="form">
+
+				<div id="section_order_data">
+					<div id="order_data">
+						<label for="id_comanda">ID Comanda</label>
+						<input id="id_comanda" type="number"></input>
+	
+						<label for="fecha">Fecha</label>
+						<input id="fecha" type="date"></input>
+	
+						<label for="nombre">Nombre cliente</label>
+						<input id="nombre" type="text"></input>
+	
+						<label for="hora">Hora de entrega</label>
+						<input id="hora" type="time"></input>
+					</div>
+					
+					<label for="telefonica">Comanda telefonica</label>
+					<input id="telefonica" type="checkbox" checked></input>
+	
+					<div id="order_data_tel">
+						<label for="local">No. Local</label>
+						<input id="local" type="number"></input>
+	
+						<label for="plaza">Plaza</label>
+						<input id="plaza" type="text"></input>
+	
+						<label for="piso">Piso</label>
+						<input id="piso" type="number"></input>
+	
+						<label for="pasillo">Pasillo</label>
+						<input id="pasillo" type="text"></input>
+					</div>
+
+					<button id="button_order_data_continue" type="button">Continuar</button>
+					<button id="button_order_data_cancel" type="button">Cancelar</button>
+				</div>
+				
+				<div id="section_platillos">
+
+					<template id="template_platillo">
+						<div class="platillo" data-id-platillo="0">
+							<button>
+								<span class="nombre"></span>
+								<img class="imagen" src="">
+								<span class="precio"></span>
+								<label>Q<input class="cantidad" type="number" min="0" value="0"></label>
+							</button>
+						</div>
+					</template>
+
+					<div id="platillos">
+
+
+					</div>
+
+					<button id="button_section_platillos_continue" type="button">Continuar</button>
+					<button id="button_section_platillos_back" type="button">Retroceder</button>
+				</div>
+
+
+
+			</div>
+		</div>
+	</body>
+	<script style="display: none;">
+		require("./a_comanda.js")
+	</script>
+</html>

@@ -48,6 +48,16 @@ async function MAIN(): Promise<void> {
 		main.createWindow(800, 600, 'gui/entrega_comanda.html', getCurrentWindow());
 	});
 
+	button_cobro_comanda.addEventListener('click', async (): Promise<void> => {
+
+		main.createWindow(800, 600, 'gui/cobro_comanda.html', getCurrentWindow());
+	});
+
+	button_registrar_comanda.addEventListener('click', async (): Promise<void> => {
+
+		main.createWindow(800, 600, 'gui/a_comanda.html', getCurrentWindow());
+	});
+
 	button_registrar_platillo.addEventListener('click', async (): Promise<void> => {
 
 		main.createWindow(800, 600, 'gui/am_platillo.html', getCurrentWindow());
@@ -94,11 +104,6 @@ async function MAIN(): Promise<void> {
 		`;
 		
 		queryWindow.setVar(code, 'codeCloseParent');
-	});
-
-	button_cobro_comanda.addEventListener('click', async (): Promise<void> => {
-
-		main.createWindow(800, 600, 'gui/cobro_comanda.html', getCurrentWindow());
 	});
 
 	button_registrar_proveedor.addEventListener('click', async (): Promise<void> => {
