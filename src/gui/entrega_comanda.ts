@@ -49,7 +49,7 @@ async function MAIN(): Promise<void> {
 	form.appendChild(select_delivery_button);
 
 	// Section select orders
-	let ordersQuery = (await main.querySQL(`SELECT * FROM comanda WHERE estatus = 'p' AND NOT id_comanda = 0;`)).rows;
+	let ordersQuery = (await main.querySQL(`SELECT * FROM comanda WHERE estatus = 'p' AND NOT id_comanda = 0 AND HORA_ENTREGA IS NOT NULL;`)).rows;
 	for (const o of ordersQuery) {
 
 		let id: string = `id_order_${id_order}`;

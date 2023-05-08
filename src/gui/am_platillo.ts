@@ -60,14 +60,45 @@ async function MAIN(): Promise<void> {
 
 			case 'text': {
 
-				// Input
-				let input = document.createElement('input') as HTMLInputElement;
-				input.type = 'text';
-				input.id = id;
-				inputContainer.appendChild(input);
+				if (column[i].name == 'categoria')
+				{
+					// Input
+					let select = document.createElement('select') as HTMLSelectElement;
+					select.id = id;
+					
+					const categorias = [
+						'postre',
+						'bebida',
+						'platillo fuerte',
+						'entrada',
+						'snack',
+						'guarnicion'
+					];
 
-				// Append to form
-				form.appendChild(inputContainer);
+					for (const j of categorias)
+					{
+						let option = document.createElement('option') as HTMLOptionElement;
+						option.value = j;
+						option.text = j;
+						select.add(option);
+					}
+
+					inputContainer.appendChild(select);
+
+					// Append to form
+					form.appendChild(inputContainer);
+				}
+				else
+				{
+					// Input
+					let input = document.createElement('input') as HTMLInputElement;
+					input.type = 'text';
+					input.id = id;
+					inputContainer.appendChild(input);
+
+					// Append to form
+					form.appendChild(inputContainer);
+				}
 				
 			}
 			break;
@@ -168,7 +199,7 @@ async function MAIN(): Promise<void> {
 					'${(document.getElementById('input_descripcion') as HTMLInputElement).value}',
 					${((imageRaw) ? (`(DECODE('${imageRaw}', 'base64'))`) : (`DEFAULT`))},
 					${(document.getElementById('input_tiempo_preparacion') as HTMLInputElement).value},
-					'${(document.getElementById('input_categoria') as HTMLInputElement).value}',
+					'${(document.getElementById('input_categoria') as HTMLSelectElement).value}',
 					DEFAULT
 					);`);
 				
@@ -209,7 +240,7 @@ async function MAIN(): Promise<void> {
 		}
 
 		(document.getElementById('input_tiempo_preparacion') as HTMLInputElement).value = `${platillo.tiempo_preparacion}`;
-		(document.getElementById('input_categoria') as HTMLInputElement).value = `${platillo.categoria}`;
+		(document.getElementById('input_categoria') as HTMLSelectElement).value = `${platillo.categoria}`;
 		(document.getElementById('input_estatus') as HTMLInputElement).checked = platillo.estatus;
 
 		let platillo_insumos = (await main.querySQL(`SELECT * FROM INSUMO_PLATILLO WHERE FK_PLATILLO = ${main.aux.id};`)).rows;
@@ -236,7 +267,7 @@ async function MAIN(): Promise<void> {
 					DESCRIPCION = '${(document.getElementById('input_descripcion') as HTMLInputElement).value}',
 					${((imageRaw) ? (`IMAGEN = (DECODE('${imageRaw}', 'base64')), `) : (``))}
 					TIEMPO_PREPARACION = ${(document.getElementById('input_tiempo_preparacion') as HTMLInputElement).value},
-					CATEGORIA = '${(document.getElementById('input_categoria') as HTMLInputElement).value}',
+					CATEGORIA = '${(document.getElementById('input_categoria') as HTMLSelectElement).value}',
 					ESTATUS = ${(document.getElementById('input_estatus') as HTMLInputElement).checked}
 					WHERE ID_PLATILLO = ${main.aux.id};`);
 
