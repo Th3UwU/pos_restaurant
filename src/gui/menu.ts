@@ -272,15 +272,11 @@ async function MAIN(): Promise<void> {
 	});
 
 	button_consultar_platillo.addEventListener('click', async (): Promise<void> => {
-
-		main.setProperty({...main.aux, column: 'platillo', canSelect: false}, 'aux');
-		main.createWindow(800, 600, 'gui/query.html', getCurrentWindow());
+		main.createWindow(800, 600, 'gui/query_platillo.html', getCurrentWindow());
 	});
 
 	button_consultar_comanda.addEventListener('click', async (): Promise<void> => {
-
-		main.setProperty({...main.aux, column: 'comanda', canSelect: false}, 'aux');
-		main.createWindow(800, 600, 'gui/query.html', getCurrentWindow());
+		main.createWindow(800, 600, 'gui/query_comanda.html', getCurrentWindow());
 	});
 }
 MAIN();

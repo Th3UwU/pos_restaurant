@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<title>Consulta platillo</title>
+		<link rel="stylesheet" href="./query_comanda.css" type="text/css">
+	</head>
+	<body>
+
+		<template id="template_comanda">
+			<div class="comanda">
+				<span class="id_comanda"></span>
+				<span class="fecha"></span>
+				<span class="cliente"></span>
+				<span class="estatus"></span>
+				
+				<div class="telefonica">
+					<span class="hora_entrega"></span>
+					<span class="empleado"></span>
+					<span class="local"></span>
+					<span class="plaza"></span>
+					<span class="piso"></span>
+					<span class="pasillo"></span>
+				</div>
+
+				<div class="platillos"></div>
+			</div>
+		</template>
+
+		<div id="container">
+
+			<label for="search_bar">Buscar:</label>
+			<input id="search_bar" type="text"></input>
+
+			<div id="comandas_container">
+
+			</div>
+
+		</div>
+	</body>
+	<script style="display: none;">
+		require("./query_comanda.js")
+	</script>
+</html>

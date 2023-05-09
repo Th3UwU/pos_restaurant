@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<title>Consulta platillo</title>
+		<link rel="stylesheet" href="./query_platillo.css" type="text/css">
+	</head>
+	<body>
+
+		<template id="template_platillo">
+			<div class="platillo">
+				<span class="id_platillo"></span>
+				<span class="nombre"></span>
+				<span class="precio"></span>
+				<img class="imagen" src="">
+				<div class="insumos"></div>
+			</div>
+		</template>
+
+		<template id="template_insumo">
+			<div class="insumo">
+				<span class="id_insumo"></span>
+				<span class="nombre"></span>
+				<span class="cantidad"></span>
+			</div>
+		</template>
+
+		<div id="container">
+
+			<label for="search_bar">Buscar:</label>
+			<input id="search_bar" type="text"></input>
+
+			<div id="platillos_container">
+
+			</div>
+
+		</div>
+	</body>
+	<script style="display: none;">
+		require("./query_platillo.js")
+	</script>
+</html>
