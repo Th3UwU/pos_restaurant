@@ -96,13 +96,22 @@ async function MAIN(): Promise<void> {
 
 		try {
 			await checkInsumos();
+			let platillos_html = document.getElementsByClassName('platillo') as HTMLCollectionOf<HTMLDivElement>;
+
+			// Checar que al menos seleccione un platillo a ordenar
+			let atLeastOne: boolean = false;
+			for (const p of platillos_html) {
+				if ((p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber != 0)
+					{atLeastOne = true; break;}
+			}
+			if (!atLeastOne)
+				throw {message: "Seleccione al menos un platillo a ordenar"};
 
 			await main.querySQL(`INSERT INTO COMANDA VALUES(${new_id}, 0,
 				'${nombre.value}', '${local.value}', '${plaza.value}', '${piso.value}', '${pasillo.value}',
 				'${hora.valueAsDate.getHours()}:${hora.valueAsDate.getMinutes()}', DEFAULT, DEFAULT);`);
 
 			// detail
-			let platillos_html = document.getElementsByClassName('platillo') as HTMLCollectionOf<HTMLDivElement>;
 			for (const p of platillos_html) {
 
 				if ((p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber != 0)
