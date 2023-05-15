@@ -160,6 +160,12 @@ async function MAIN(): Promise<void> {
 		
 		queryWindow.setVar(code, 'codeCloseParent');
 	});
+
+
+	button_registrar_compra_proveedor.addEventListener('click', async (): Promise<void> => {
+		
+		main.createWindow(800, 600, 'gui/a_compra.html', getCurrentWindow());
+	});
 	
 	
 	button_registrar_empleado.addEventListener('click', async (): Promise<void> => {

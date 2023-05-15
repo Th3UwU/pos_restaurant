@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<title>Registrar compra</title>
+		<link rel="stylesheet" href="./a_compra.css" type="text/css">
+	</head>
+	<body>
+		<div id="container">
+
+			<div id="section_select_proveedor" data-id-proveedor="0">
+				<span>SELECCIONE UN PROVEEDOR</span>
+
+				<template id="template_proveedor">
+					<div class="proveedor" data-id-proveedor="0">
+						<button>
+							<span class="nombre"></span>
+						</button>
+					</div>
+				</template>
+
+				<template id="template_insumo">
+					<div class="insumo" data-id-insumo="0" data-valid="0">
+						<span class="nombre"></span>
+						<label>ID Insumo<input class="id_insumo" type="number" value="0" min="0"></input></label>
+						<label>Cantidad<input class="cantidad_insumo" type="number" value="1" min="1"></input></label>
+						<label>Costo<input class="costo_insumo" type="number" value="0" min="0"></input></label>
+						<button class="button_select">Seleccionar Insumo</button>
+						<button class="button_delete">Eliminar</button>
+					</div>
+				</template>
+
+			</div>
+
+			<div id="section_select_insumos">
+
+				<label for="id_compra">ID Compra</label>
+				<input id="id_compra" type="number"></input>
+
+				<label for="id_proveedor">ID Proveedor</label>
+				<input id="id_proveedor" type="number"></input>
+
+				<label for="fecha">Fecha</label>
+				<input id="fecha" type="date"></input>
+
+				<div id="section_add_insumos">
+
+				</div>
+
+				<span>TOTAL: </span><span id="total"></span>
+
+				<button id="button_accept">Confirmar</button>
+				<button id="button_cancel">Cancelar</button>
+				<button id="button_add">Agregar insumo</button>
+
+			</div>
+
+			<div id="section_show_total"></div>
+
+		</div>
+	</body>
+	<script style="display: none;">
+		require("./a_compra.js")
+	</script>
+</html>

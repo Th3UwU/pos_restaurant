@@ -24,6 +24,11 @@ switch (main.aux.column) {
 		matchRow = 'nombre';
 		break;
 
+	case "insumo_proveedor":
+		visibleColumns = ['id_insumo', 'nombre', 'existencias'];
+		matchRow = 'nombre';
+		break;
+
 	case "empleado_repartidor":
 		visibleColumns = ['id_empleado', 'nombre'];
 		matchRow = 'nombre';
@@ -65,6 +70,15 @@ async function MAIN(): Promise<void> {
 			query = `SELECT * FROM empleado WHERE ` +
 			((isNumber) ? (`id_empleado = ${parseInt(search_bar.value)}`) : (`LOWER(${matchRow}) LIKE LOWER('%${search_bar.value}%')`))
 			+ ` AND puesto = 'repartidor' AND NOT id_empleado = 0;`;
+			break;
+
+		case 'insumo_proveedor':
+			
+			query = `SELECT * FROM INSUMO
+			INNER JOIN INSUMO_PROVEEDOR
+			ON ID_INSUMO = FK_INSUMO
+			WHERE FK_PROVEEDOR = ${main.aux.id_proveedor} AND NOT ID_INSUMO = 0
+			AND ` + ((isNumber) ? (`ID_INSUMO = ${parseInt(search_bar.value)}`) : (`LOWER(${matchRow}) LIKE LOWER('%${search_bar.value}%');`));
 			break;
 
 		default:
