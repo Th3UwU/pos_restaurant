@@ -18,7 +18,6 @@ let fecha = document.getElementById('fecha') as HTMLInputElement;
 let nombre = document.getElementById('nombre') as HTMLInputElement;
 let hora = document.getElementById('hora') as HTMLInputElement;
 
-let telefonica = document.getElementById('telefonica') as HTMLInputElement;
 let local = document.getElementById('local') as HTMLInputElement;
 let plaza = document.getElementById('plaza') as HTMLInputElement;
 let piso = document.getElementById('piso') as HTMLInputElement;
@@ -61,16 +60,12 @@ async function MAIN(): Promise<void> {
 	fecha.readOnly = true;
 	fecha.valueAsDate = new Date();
 
-	// Comanda telefonica
-	telefonica.addEventListener('change', async (): Promise<void> => {
-
-		if (telefonica.checked)
-			order_data_tel.style.display = 'block';
-		else
-			order_data_tel.style.display = 'none';
-	});
-
 	button_order_data_continue.addEventListener('click', () => {
+
+		// Check empty inputs
+		if (!checkEmptyInputs())
+			{dialog.showMessageBoxSync(getCurrentWindow(), {title: "Error", message: "No puede haber campos vacíos", type: "error"}); return;}
+
 		section_order_data.style.display = 'none';
 		section_platillos.style.display = 'block';
 	});
@@ -106,18 +101,9 @@ async function MAIN(): Promise<void> {
 		try {
 			await checkInsumos();
 
-			// header
-			if (telefonica.checked)
-			{
-				await main.querySQL(`INSERT INTO COMANDA VALUES(${new_id}, 0,
-					'${nombre.value}', '${local.value}', '${plaza.value}', '${piso.value}', '${pasillo.value}',
-					'${hora.valueAsDate.getHours()}:${hora.valueAsDate.getMinutes()}', DEFAULT, DEFAULT);`);
-			}
-			else
-			{
-				await main.querySQL(`INSERT INTO COMANDA VALUES(${new_id}, 0,
-					'${nombre.value}', NULL, NULL, NULL, NULL, NULL, DEFAULT, DEFAULT);`);
-			}
+			await main.querySQL(`INSERT INTO COMANDA VALUES(${new_id}, 0,
+				'${nombre.value}', '${local.value}', '${plaza.value}', '${piso.value}', '${pasillo.value}',
+				'${hora.valueAsDate.getHours()}:${hora.valueAsDate.getMinutes()}', DEFAULT, DEFAULT);`);
 
 			// detail
 			let platillos_html = document.getElementsByClassName('platillo') as HTMLCollectionOf<HTMLDivElement>;
@@ -172,12 +158,8 @@ async function MAIN(): Promise<void> {
 
 			ticket.innerHTML += `\nTOTAL: $${total}\n`;
 
-			if (telefonica.checked)
-			{
-				ticket.innerHTML += `\nLocal: ${local.value}\nPlaza: ${plaza.value}\nPiso: ${piso.value}\nPasillo: ${pasillo.value}\n`;
-				ticket.innerHTML += `Hora entrega: ${hora.valueAsDate.getHours()}:${hora.valueAsDate.getMinutes()}\n`;
-			}
-
+			ticket.innerHTML += `\nLocal: ${local.value}\nPlaza: ${plaza.value}\nPiso: ${piso.value}\nPasillo: ${pasillo.value}\n`;
+			ticket.innerHTML += `Hora entrega: ${hora.valueAsDate.getHours()}:${hora.valueAsDate.getMinutes()}\n`;
 			ticket.innerHTML += `--- Gracias por su preferencia ---`;
 
 
@@ -234,4 +216,15 @@ async function checkInsumos(): Promise<void> {
 			throw {message: `No hay suficientes ${nombre_insumo} para preparar los platillos`};
 		}
 	}
+}
+
+function checkEmptyInputs(): boolean {
+	if (nombre.value == '') return false;
+	if (!hora.value) return false;
+	if (local.valueAsNumber == 0) return false;
+	if (piso.valueAsNumber == 0) return false;
+	if (plaza.value == '') return false;
+	if (pasillo.value == '') return false;
+
+	return true;
 }
