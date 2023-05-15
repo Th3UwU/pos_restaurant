@@ -152,7 +152,9 @@ async function MAIN(): Promise<void> {
 			let total: number = 0;
 
 			ticket.innerHTML = `Restaurante ALE\n`;
-			ticket.innerHTML += `${(new Date()).toISOString().substring(0, 10)}\n`;
+			ticket.innerHTML += `Folio: ${new_id}\n`;
+			ticket.innerHTML += `Fecha: ${(new Date()).toISOString().substring(0, 10)}\n`;
+			ticket.innerHTML += `CANT				PLATILLO				PRECIO				IMPORTE\n`;
 			for (const p of platillos_html)
 			{
 				if ((p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber != 0)
@@ -161,8 +163,10 @@ async function MAIN(): Promise<void> {
 					total += costo;
 
 					let nombre_platillo: string = (await main.querySQL(`SELECT NOMBRE FROM PLATILLO WHERE ID_PLATILLO = ${p.dataset.idPlatillo};`)).rows[0].nombre;
-					ticket.innerHTML += `${nombre_platillo} X ${(p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber}`;
-					ticket.innerHTML += ` - $${costo}\n`;
+					ticket.innerHTML += `${(p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber}`;
+					ticket.innerHTML += `				${nombre_platillo}`;
+					ticket.innerHTML += `				$${costo * (p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber}`;
+					ticket.innerHTML += `				$${costo}\n`;
 				}
 			}
 
