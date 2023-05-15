@@ -46,6 +46,10 @@ async function MAIN(): Promise<void> {
 
 			section_select_proveedor.style.display = 'none';
 			section_select_insumos.style.display = 'block';
+			
+			(document.getElementById('label_id_proveedor') as HTMLLabelElement).innerHTML =
+			`${p.nombre}, ID Proveedor`;
+
 			idProveedor = parseInt(proveedor_instance.dataset.idProveedor);
 			id_proveedor.value = `${idProveedor}`;
 		});

@@ -39,10 +39,6 @@ let section_order_data = document.getElementById('section_order_data') as HTMLDi
 let section_platillos = document.getElementById('section_platillos') as HTMLDivElement;
 let section_ticket = document.getElementById('section_ticket') as HTMLDivElement;
 
-// Form container
-let order_data = document.getElementById('order_data') as HTMLDivElement;
-let order_data_tel = document.getElementById('order_data_tel') as HTMLDivElement;
-
 async function MAIN(): Promise<void> {
 
 	let new_id: number = (await main.querySQL(`SELECT MAX(ID_COMANDA) FROM COMANDA;`)).rows[0].max;
