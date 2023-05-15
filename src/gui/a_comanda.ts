@@ -147,8 +147,8 @@ async function MAIN(): Promise<void> {
 					let nombre_platillo: string = (await main.querySQL(`SELECT NOMBRE FROM PLATILLO WHERE ID_PLATILLO = ${p.dataset.idPlatillo};`)).rows[0].nombre;
 					ticket.innerHTML += `${(p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber}`;
 					ticket.innerHTML += `				${nombre_platillo}`;
-					ticket.innerHTML += `				$${costo * (p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber}`;
-					ticket.innerHTML += `				$${costo}\n`;
+					ticket.innerHTML += `				$${costo}`;
+					ticket.innerHTML += `				$${costo * (p.querySelector('.cantidad') as HTMLInputElement).valueAsNumber}\n`;
 				}
 			}
 

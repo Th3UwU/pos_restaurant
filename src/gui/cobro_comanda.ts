@@ -110,11 +110,11 @@ async function MAIN(): Promise<void> {
 				atLeastOne = true;
 		}
 
-		if (!atLeastOne)
-			{dialog.showMessageBoxSync(getCurrentWindow(), {title: "Error", message: "Seleccione por lo menos un cliente", type: "error"}); return;}
-
 		if (delivery.dataset.deliveryId == '0')
 			{dialog.showMessageBoxSync(getCurrentWindow(), {title: "Error", message: "Seleccione un repartidor", type: "error"}); return;}
+
+		if (!atLeastOne)
+			{dialog.showMessageBoxSync(getCurrentWindow(), {title: "Error", message: "Seleccione por lo menos un cliente", type: "error"}); return;}
 
 		section_1.style.display = 'none';
 		section_2.style.display = 'block';
