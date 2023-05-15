@@ -49,7 +49,7 @@ async function MAIN(): Promise<void> {
 	form.appendChild(select_delivery_button);
 
 	// Section select orders
-	let ordersQuery = (await main.querySQL(`SELECT * FROM comanda WHERE estatus = 'p' AND NOT id_comanda = 0 AND HORA_ENTREGA IS NOT NULL;`)).rows;
+	let ordersQuery = (await main.querySQL(`SELECT * FROM comanda WHERE estatus = 'p' AND NOT id_comanda = 0;`)).rows;
 	for (const o of ordersQuery) {
 
 		let id: string = `id_order_${id_order}`;
@@ -77,15 +77,29 @@ async function MAIN(): Promise<void> {
 
 	// Accept button
 	button_accept.addEventListener('click', async (): Promise<void> => {
-		
-		let querys: string[] = [];
-		// get checkboxes
-		let checkboxes = document.getElementsByClassName('delivery_checkbox') as HTMLCollectionOf<HTMLInputElement>;
-		for (const c of checkboxes)
-			if (c.checked)
-			querys.push(`UPDATE comanda SET estatus = 'e', fk_empleado = ${delivery.dataset.deliveryId} WHERE id_comanda = ${c.dataset.orderId};`);
 
 		try {
+
+			if (delivery.dataset.deliveryId == '0')
+				throw {message: 'Seleccione un repartidor'};
+
+			let querys: string[] = [];
+			// get checkboxes
+			let atLeastOne: boolean = false;
+			let checkboxes = document.getElementsByClassName('delivery_checkbox') as HTMLCollectionOf<HTMLInputElement>;
+
+			for (const c of checkboxes)
+			{
+				if (c.checked)
+				{
+					atLeastOne = true;
+					querys.push(`UPDATE comanda SET estatus = 'e', fk_empleado = ${delivery.dataset.deliveryId} WHERE id_comanda = ${c.dataset.orderId};`);
+				}
+			}
+
+			if (!atLeastOne)
+				throw {message: 'Seleccione por lo menos un cliente'};
+			
 			for (const c of querys) {
 				console.log(c);
 				await main.querySQL(c);

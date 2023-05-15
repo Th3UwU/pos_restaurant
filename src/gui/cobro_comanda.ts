@@ -102,15 +102,29 @@ async function MAIN(): Promise<void> {
 
 	// Accept button
 	button_accept.addEventListener('click', async (): Promise<void> => {
+		
+		let atLeastOne: boolean = false;
+		let checkboxes = document.getElementsByClassName('delivery_checkbox') as HTMLCollectionOf<HTMLInputElement>;
+		for (const c of checkboxes) {
+			if (c.checked)
+				atLeastOne = true;
+		}
+
+		if (!atLeastOne)
+			{dialog.showMessageBoxSync(getCurrentWindow(), {title: "Error", message: "Seleccione por lo menos un cliente", type: "error"}); return;}
+
+		if (delivery.dataset.deliveryId == '0')
+			{dialog.showMessageBoxSync(getCurrentWindow(), {title: "Error", message: "Seleccione un repartidor", type: "error"}); return;}
 
 		section_1.style.display = 'none';
 		section_2.style.display = 'block';
 
 		let totalCost: number = 0;
-		let checkboxes = document.getElementsByClassName('delivery_checkbox') as HTMLCollectionOf<HTMLInputElement>;
 		for (const c of checkboxes)
-		if (c.checked)
-		totalCost += parseInt(c.dataset.orderCost);
+		{
+			if (c.checked)
+				totalCost += parseInt(c.dataset.orderCost);
+		}
 		total_pay.innerHTML = `TOTAL A COBRAR: $${totalCost}`;
 	});
 
