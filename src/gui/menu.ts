@@ -42,6 +42,9 @@ async function MAIN(): Promise<void> {
 	if (role != 'gerente')
 		document.getElementById('menu_gerente').style.display = 'none';
 
+		if (role != 'gerente' && role != 'cajero')
+		document.getElementById('menu_cajero').style.display = 'none';
+
 	//
 	button_entrega_comanda.addEventListener('click', async (): Promise<void> => {
 
