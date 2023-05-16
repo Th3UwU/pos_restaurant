@@ -30,11 +30,11 @@ async function search(): Promise<void>
 	
 	let comandas = null;
 	if (isNumber)
-		comandas = (await main.querySQL(`SELECT * FROM COMANDA WHERE NOT ID_COMANDA = 0 AND ID_COMANDA = ${value};`)).rows;
+		comandas = (await main.querySQL(`SELECT * FROM COMANDA WHERE NOT ID_COMANDA = 0 AND NOT ESTATUS = 'g' AND ID_COMANDA = ${value};`)).rows;
 	else if (value == '')
-		comandas = (await main.querySQL(`SELECT * FROM COMANDA WHERE NOT ID_COMANDA = 0;`)).rows;
+		comandas = (await main.querySQL(`SELECT * FROM COMANDA WHERE NOT ID_COMANDA = 0 AND NOT ESTATUS = 'g';`)).rows;
 	else
-		comandas = (await main.querySQL(`SELECT * FROM COMANDA WHERE NOT ID_COMANDA = 0 AND LOWER(NOMBRE_CLIENTE) LIKE LOWER('%${value}%');`)).rows;
+		comandas = (await main.querySQL(`SELECT * FROM COMANDA WHERE NOT ID_COMANDA = 0 AND NOT ESTATUS = 'g' AND LOWER(NOMBRE_CLIENTE) LIKE LOWER('%${value}%');`)).rows;
 
 
 	for (const c of comandas)
