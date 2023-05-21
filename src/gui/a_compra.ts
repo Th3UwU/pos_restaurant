@@ -111,6 +111,7 @@ async function MAIN(): Promise<void> {
 				let insumo = (await main.querySQL(`SELECT * FROM INSUMO WHERE ID_INSUMO = ${idInsumo};`)).rows;
 				(document.getElementById(id).querySelector('.nombre') as HTMLSpanElement).innerHTML = insumo[0].nombre;
 				document.getElementById(id).dataset.valid = '1';
+				document.getElementById(id).dataset.idInsumo = `${idInsumo}`;
 
 				updateTotal();
 			}
@@ -138,6 +139,7 @@ async function MAIN(): Promise<void> {
 				document.getElementById('${id}').querySelector('.id_insumo').value = main.aux.return.id_insumo;
 				document.getElementById('${id}').querySelector('.nombre').innerHTML = main.aux.return.nombre;
 				document.getElementById('${id}').dataset.valid = '1';
+				document.getElementById('${id}').dataset.idInsumo = main.aux.return.id_insumo;
 			}
 			catch (error) {}
 			`;
@@ -152,6 +154,8 @@ async function MAIN(): Promise<void> {
 	button_accept.addEventListener('click', async (): Promise<void> => {
 
 		try {
+
+			checkInputs();
 
 			let insumos = document.getElementsByClassName('insumo') as HTMLCollectionOf<HTMLDivElement>;
 			for (const i of insumos) {
@@ -169,6 +173,11 @@ async function MAIN(): Promise<void> {
 
 				await main.querySQL(`INSERT INTO COMPRA_INSUMOS_PROVEEDOR VALUES((SELECT MAX(ID_COMPRA_INSUMOS_PROVEEDOR) FROM COMPRA_INSUMOS_PROVEEDOR) + 1,
 				${new_id}, ${i.dataset.idInsumo}, ${(i.querySelector('.cantidad_insumo') as HTMLInputElement).value}, ${(i.querySelector('.costo_insumo') as HTMLInputElement).value});`);
+
+				await main.querySQL(`UPDATE INSUMO SET EXISTENCIAS =
+				((SELECT EXISTENCIAS FROM INSUMO WHERE ID_INSUMO = ${i.dataset.idInsumo}) +
+				(${(i.querySelector('.cantidad_insumo') as HTMLInputElement).valueAsNumber}))
+				WHERE ID_INSUMO = ${i.dataset.idInsumo};`);
 			}
 
 			dialog.showMessageBoxSync(null, {title: "Éxito", message: `Registro exitoso`, type: "info"});
@@ -201,4 +210,26 @@ function updateTotal()
 
 	}
 	document.getElementById('total').innerHTML = `$${total}`;
+}
+
+function checkInputs(): void
+{
+	let insumos = document.getElementsByClassName('insumo') as HTMLCollectionOf<HTMLDivElement>;
+
+	// Al menos 1 elemento en la compra
+	if (insumos.length == 0) {
+		throw {message: 'Agregue al menos 1 insumo a la compra!!'};
+	}
+
+	// No se repiten
+	let currentSupplies: string[] = [];
+
+	for (const i of insumos) {
+		let id = (i.querySelector('.id_insumo') as HTMLInputElement).value;
+
+		if (currentSupplies.includes(id))
+			throw {message: `No agregue insumos duplicados (${id})`};
+		else
+			currentSupplies.push(id);
+	}
 }

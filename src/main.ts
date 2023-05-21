@@ -51,6 +51,7 @@ class Main {
 	}
 
 	async querySQL(query: string): Promise<QueryResult<any>> {
+		console.log(query);
 		return (await this.client.query(query));
 	}
 

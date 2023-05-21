@@ -94,6 +94,7 @@ async function MAIN(): Promise<void> {
 					let input = document.createElement('input') as HTMLInputElement;
 					input.type = 'text';
 					input.id = id;
+					input.className = 'textInput'; // llenar obligatorio **
 					inputContainer.appendChild(input);
 
 					// Append to form
@@ -182,6 +183,8 @@ async function MAIN(): Promise<void> {
 
 			try
 			{
+				checkInputs()
+
 				let ingredients = document.getElementsByClassName('ingredient') as HTMLCollectionOf<HTMLDivElement>;
 				for (const i of ingredients)
 					if (i.dataset.valid == '0')
@@ -378,6 +381,42 @@ async function addIngredient(id_insumo: number, cantidad: number): Promise<void>
 		queryWindow.setVar(code, 'codeCloseParent');
 	});
 	ingredientItemContainer.appendChild(ingredientButton);
+	
+	let deleteButton = document.createElement('button') as HTMLButtonElement;
+	deleteButton.innerHTML = `Eliminar`;
+	deleteButton.addEventListener('click', async (event: any): Promise<void> => {
+		event.target.parentElement.remove()
+	});
+	ingredientItemContainer.appendChild(deleteButton);
 
 	form_ingredients.appendChild(ingredientItemContainer);
+}
+
+
+function checkInputs(): void
+{
+	let ingredients = document.getElementsByClassName('ingredient') as HTMLCollectionOf<HTMLDivElement>;
+
+	// Por lo menos 1 ingrediente
+	if (ingredients.length == 0)
+		throw {message: `Agregue al menos 1 ingrediente!!`};
+
+	// Campos vacíos
+	let textInput = document.getElementsByClassName('textInput') as HTMLCollectionOf<HTMLInputElement>;
+	for (const ti of textInput) {
+		if (ti.value == '')
+			throw {message: `No puede dejar campos vacíos!!`};
+	}
+
+	// Evitar ingredientes repetidos
+	let currentIngredients: string[] = [];
+
+	for (const i of ingredients) {
+		let id = (i.querySelector('.ingredient_id') as HTMLInputElement).value;
+
+		if (currentIngredients.includes(id))
+			throw {message: `No agregue insumos duplicados (${id})`};
+		else
+			currentIngredients.push(id);
+	}
 }

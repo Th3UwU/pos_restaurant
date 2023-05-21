@@ -19,7 +19,7 @@ let nombre = document.getElementById('nombre') as HTMLInputElement;
 let hora = document.getElementById('hora') as HTMLInputElement;
 
 let local = document.getElementById('local') as HTMLInputElement;
-let plaza = document.getElementById('plaza') as HTMLInputElement;
+let plaza = document.getElementById('plaza') as HTMLSelectElement;
 let piso = document.getElementById('piso') as HTMLInputElement;
 let pasillo = document.getElementById('pasillo') as HTMLInputElement;
 
@@ -49,6 +49,18 @@ async function MAIN(): Promise<void> {
 
 	//***** Seccion datos comanda *****//
 
+	// Select plaza
+	const nombrePlazas: string[] = [
+		"tecnologia",
+		"frikiplaza"
+	]
+	for (const p of nombrePlazas) {
+		let o = document.createElement('option');
+		o.value = p;
+		o.text = p;
+		plaza.add(o);
+	}
+
 	// Readonly values
 	id_comanda.readOnly = true;
 	id_comanda.valueAsNumber = new_id;
@@ -73,7 +85,7 @@ async function MAIN(): Promise<void> {
 	//***** Seccion platillos *****//
 
 	// Agregar cada platillo al menu
-	let platillos_info: any[] = (await main.querySQL(`SELECT * FROM PLATILLO WHERE NOT ID_PLATILLO = 0;`)).rows;
+	let platillos_info: any[] = (await main.querySQL(`SELECT * FROM PLATILLO WHERE NOT ID_PLATILLO = 0 AND ESTATUS = TRUE;`)).rows;
 	for (const p of platillos_info)
 	{
 		let platillo_instance = document.importNode(template_platillo, true);
@@ -226,9 +238,6 @@ async function checkInsumos(): Promise<void> {
 function checkEmptyInputs(): boolean {
 	if (nombre.value == '') return false;
 	if (!hora.value) return false;
-	if (local.valueAsNumber == 0) return false;
-	if (piso.valueAsNumber == 0) return false;
-	if (plaza.value == '') return false;
 	if (pasillo.value == '') return false;
 
 	return true;
